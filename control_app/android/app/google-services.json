@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "739075153701",
+    "firebase_url": "https://akwa-dialysis-default-rtdb.firebaseio.com",
+    "project_id": "akwa-dialysis",
+    "storage_bucket": "akwa-dialysis.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:739075153701:android:8d0da05942cfec9ded04cc",
+        "android_client_info": {
+          "package_name": "com.example.control_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "739075153701-gv4o3oc61qgnglbfbv0339luc52mas7r.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBBaV4FdpsVhkSEc_lQ8p2eNK0OzfBJD6Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "739075153701-gv4o3oc61qgnglbfbv0339luc52mas7r.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
