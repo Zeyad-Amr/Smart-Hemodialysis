@@ -1,17 +1,29 @@
 class Readings {
-  int containerLvl;
+  int dialysateLvl;
+  int dialysateTemp;
+  int bloodFlow;
+  int dialysateFlow;
   int drainLvl;
-  int temp;
   int status;
   Readings({
-    required this.containerLvl,
+    required this.dialysateLvl,
+    required this.dialysateTemp,
+    required this.bloodFlow,
+    required this.dialysateFlow,
     required this.drainLvl,
-    required this.temp,
     required this.status,
   });
 
   @override
   String toString() {
-    return 'Readings(containerLvl: $containerLvl, drainLvl: $drainLvl, temp: $temp, status: $status)';
+    return 'Readings(dialysateLvl: $dialysateLvl, dialysateTemp: $dialysateTemp, bloodFlow: $bloodFlow, dialysateFlow: $dialysateFlow, drainLvl: $drainLvl, status: $status)';
   }
 }
+
+///
+/// Blood Flow
+/// Dialysate Flow
+/// Dialysate Level 
+/// Drain Level 
+/// Dialysate Temp
+/// Status

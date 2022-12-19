@@ -16,7 +16,7 @@ class SplashScreen extends StatelessWidget {
             duration: 4000,
             imageSize: 350,
             imageSrc: "assets/logo.png",
-            text: 'Smart Pre-Dialyzer',
+            text: 'Smart Hemodialysis',
             textType: TextType.TyperAnimatedText,
             textStyle: const TextStyle(
               fontSize: 30.0,
@@ -28,7 +28,7 @@ class SplashScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: const [
                 Text('Powered by Akwa Mix'),
-                Text('Team 16'),
+                Text('Team 15'),
               ],
             ),
             bottom: 50,

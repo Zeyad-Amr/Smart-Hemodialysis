@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:control_app/models/readings.dart';
+import 'package:control_app/services/service.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:control_app/widgets/strip_widget.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,8 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Readings? readings = Readings(containerLvl: 0, drainLvl: 0, temp: 0, status: 0);
+  Readings readings =
+      Readings(dialysateLvl: 0, dialysateTemp: 0, bloodFlow: 0, dialysateFlow: 0, drainLvl: 0, status: 0);
   BluetoothConnection? connection;
   String prevString = '';
 
@@ -32,20 +34,54 @@ class _HomeState extends State<Home> {
   String msg(int status) {
     switch (status) {
       case 0:
-        return 'Process is running';
+        return 'Connecting ..';
       case 1:
-        return 'Temperature is less than the standard reference\n\nHeater is activated';
+        return 'Adjusting conditions';
       case 2:
-        return 'There is a blood detected';
+        return 'Machine is working';
       case 3:
-        return 'Dialysate Conatiner is empty, please refill it';
+        return 'Dialysate Container is empty, please fill it';
       case 4:
         return 'Drain Container is full, please empty it';
-      case 5:
-        return 'Please, Maintain PH of the dialyste';
 
       default:
-        return 'Smart Pre-Dialyzer';
+        return 'Waiting ...';
+    }
+  }
+
+  String statusMsg(int status) {
+    switch (status) {
+      case 0:
+        return 'Offline';
+      case 1:
+        return 'Hemodialysis Machine is Available Now';
+      case 2:
+        return 'Hemodialysis Machine is Available Now';
+      case 3:
+        return 'Warning !';
+      case 4:
+        return 'Warning !';
+
+      default:
+        return 'Waiting ...';
+    }
+  }
+
+  Color statusColor(int status) {
+    switch (status) {
+      case 0:
+        return Colors.grey;
+      case 1:
+        return Colors.blue;
+      case 2:
+        return Colors.green;
+      case 3:
+        return Colors.amber;
+      case 4:
+        return Colors.amber;
+
+      default:
+        return Colors.grey;
     }
   }
 
@@ -96,11 +132,12 @@ class _HomeState extends State<Home> {
           if (data.length == 4) {
             setState(() {
               readings = Readings(
-                containerLvl: int.parse(data[0]),
-                drainLvl: int.parse(data[1]) <= 50 ? 0 : int.parse(data[1]),
-                temp: int.parse(data[2]),
-                status: int.parse(data[3]),
-              );
+                  dialysateLvl: int.parse(data[0]),
+                  dialysateTemp: int.parse(data[1]),
+                  bloodFlow: int.parse(data[2]),
+                  dialysateFlow: int.parse(data[3]),
+                  drainLvl: int.parse(data[4]),
+                  status: int.parse(data[5]));
               debugPrint(readings.toString());
             });
           } else {
@@ -195,7 +232,7 @@ class _HomeState extends State<Home> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Hemodialysis"),
+        title: const Text("Smart Hemodialysis"),
         backgroundColor: Colors.grey[900],
         leading: Padding(
           padding: const EdgeInsets.only(
@@ -203,6 +240,22 @@ class _HomeState extends State<Home> {
           ),
           child: Image.asset('assets/akwa.png'),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: IconButton(
+                onPressed: () {
+                  try {
+                    connection!.close();
+                  } catch (e) {}
+                  Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const Services()));
+                },
+                icon: Icon(
+                  Icons.restart_alt_rounded,
+                  color: Colors.red,
+                )),
+          )
+        ],
       ),
       body: Container(
         color: Colors.grey[200],
@@ -210,9 +263,12 @@ class _HomeState extends State<Home> {
           children: [
             Container(
               child: Center(
-                  child: Text(readings!.status == 0 ? 'Hemodialysis Machine is Available Now' : 'Warining !',
+                  child: Text(
+                      statusMsg(
+                        readings.status,
+                      ),
                       style: const TextStyle(color: Colors.white))),
-              color: readings!.status == 0 ? Colors.green[600] : Colors.amber[600],
+              color: statusColor(readings.status),
               width: double.infinity,
               height: 25,
             ),
@@ -225,38 +281,54 @@ class _HomeState extends State<Home> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Strip(
-                        isWarning: readings!.status == 3,
+                        isWarning: readings.status == 3 || readings.status == 1 || readings.status == 0,
                         icon: null,
-                        txt: readings!.containerLvl.toString() + ' %',
-                        type: 'Container Level'),
+                        txt: readings.dialysateLvl.toString() + ' %',
+                        type: 'Dialysate Level'),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Strip(
-                        isWarning: readings!.status == 4,
-                        icon: null,
-                        txt: readings!.drainLvl == 0 ? '>50' : readings!.drainLvl.toString() + ' %',
-                        type: 'Drain Level'),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Strip(
-                        isWarning: readings!.status == 1,
+                        isWarning: readings.status == 1 || readings.status == 0,
                         icon: Icon(
                           Icons.thermostat,
                           size: 30,
                           color: Colors.grey[800],
                         ),
-                        txt: readings!.temp.toString() + ' ℃',
+                        txt: readings.dialysateTemp.toString() + ' ℃',
                         type: 'Temperature'),
                   ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Strip(
-                        isWarning: readings!.status == 5,
+                        isWarning: readings.status == 1 || readings.status == 0,
                         icon: null,
-                        txt: readings!.status == 5 ? 'PH isn\'t in range' : 'PH is in range',
-                        type: 'PH'),
+                        txt: readings.bloodFlow.toString(),
+                        type: 'Blood Flow (ml/min)'),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Strip(
+                        isWarning: readings.status == 1 || readings.status == 0,
+                        icon: null,
+                        txt: readings.dialysateFlow.toString(),
+                        type: 'Dialysate Flow (ml/min)'),
+                  ),
+                  // Padding(
+                  //   padding: const EdgeInsets.all(8.0),
+                  //   child: Strip(
+                  //       isWarning: readings.status == 5,
+                  //       icon: null,
+                  //       txt: readings.status == 5 ? 'PH isn\'t in range' : 'PH is in range',
+                  //       type: 'PH'),
+                  // ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Strip(
+                        isWarning: readings.status == 4 || readings.status == 1 || readings.status == 0,
+                        icon: null,
+                        txt: readings.drainLvl.toString() + ' %',
+                        type: 'Drain Level'),
                   ),
                   Expanded(
                     child: Padding(
@@ -265,13 +337,13 @@ class _HomeState extends State<Home> {
                         decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(30),
-                            border: Border.all(color: readings!.status != 0 ? Colors.amber : Colors.green, width: 2)),
+                            border: Border.all(color: statusColor(readings.status), width: 2)),
                         width: widths * 0.85,
                         child: Padding(
                           padding: const EdgeInsets.all(20.0),
                           child: Center(
                               child: Text(
-                            msg(readings!.status),
+                            msg(readings.status),
                             textAlign: TextAlign.center,
                             style: TextStyle(fontSize: 25, color: Colors.grey[800]),
                           )),

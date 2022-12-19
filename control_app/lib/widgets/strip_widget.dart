@@ -2,12 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class Strip extends StatelessWidget {
-  const Strip(
-      {Key? key,
-      required this.icon,
-      required this.txt,
-      required this.type,
-      required this.isWarning})
+  const Strip({Key? key, required this.icon, required this.txt, required this.type, required this.isWarning})
       : super(key: key);
   final Icon? icon;
   final String? txt;
@@ -24,8 +19,7 @@ class Strip extends StatelessWidget {
     if (MediaQuery.of(context).orientation == Orientation.portrait) {
       widths = MediaQuery.of(context).size.width;
       heights = MediaQuery.of(context).size.height;
-    } else if (kIsWeb ||
-        MediaQuery.of(context).orientation == Orientation.landscape) {
+    } else if (kIsWeb || MediaQuery.of(context).orientation == Orientation.landscape) {
       widths = MediaQuery.of(context).size.height;
       heights = MediaQuery.of(context).size.width;
     }
@@ -44,13 +38,18 @@ class Strip extends StatelessWidget {
               ),
               width: widths * 0.8,
               height: widths * 0.16,
-              child: Center(
-                child: Text(
-                  type == 'PH' ? txt! : type!,
-                  style: TextStyle(
-                      fontSize: 23,
-                      color: type == 'PH' ? Colors.grey[800] : Colors.white),
-                ),
+              child: Row(
+                children: [
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.21,
+                  ),
+                  Center(
+                    child: Text(
+                      type == 'PH' ? txt! : type!,
+                      style: TextStyle(fontSize: 22, color: type == 'PH' ? Colors.grey[800] : Colors.white),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
@@ -75,7 +74,7 @@ class Strip extends StatelessWidget {
                   : Center(
                       child: Text(
                       txt!,
-                      style: const TextStyle(fontSize: 20, color: Colors.white),
+                      style: const TextStyle(fontSize: 18, color: Colors.white),
                     )),
             ),
           ),
