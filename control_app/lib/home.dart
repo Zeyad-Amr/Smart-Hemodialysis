@@ -15,8 +15,14 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  Readings readings =
-      Readings(dialysateLvl: 0, dialysateTemp: 0, bloodFlow: 0, dialysateFlow: 0, drainLvl: 0, status: 0);
+  Readings readings = Readings(
+    status: 4,
+    dialysateLvl: 84,
+    dialysateTemp: 37,
+    bloodFlow: 256,
+    dialysateFlow: 782,
+    drainLvl: 100,
+  );
   BluetoothConnection? connection;
   String prevString = '';
 
@@ -54,9 +60,9 @@ class _HomeState extends State<Home> {
       case 0:
         return 'Offline';
       case 1:
-        return 'Hemodialysis Machine is Available Now';
+        return 'Online';
       case 2:
-        return 'Hemodialysis Machine is Available Now';
+        return 'Online';
       case 3:
         return 'Warning !';
       case 4:
@@ -125,27 +131,27 @@ class _HomeState extends State<Home> {
         String dataString = String.fromCharCodes(buffer);
         dataList.add(dataString);
 
-        // debugPrint('data ${dataList.join().split("@").last}');
+        debugPrint('data ${dataList.join()}');
         try {
-          String x = dataList.join().split("@").last;
+          String x = dataList.join().split("@")[dataList.join().split("@").length - 2];
           List<String> data = x.split('*');
-          if (data.length == 4) {
+          if (data.length == 6) {
             setState(() {
               readings = Readings(
-                  dialysateLvl: int.parse(data[0]),
-                  dialysateTemp: int.parse(data[1]),
+                  dialysateLvl: ((int.parse(data[0]) ~/ 10) - 100).abs(),
+                  dialysateTemp: int.parse(data[1]) ~/ 10,
                   bloodFlow: int.parse(data[2]),
                   dialysateFlow: int.parse(data[3]),
-                  drainLvl: int.parse(data[4]),
+                  drainLvl: int.parse(data[4]) ~/ 10,
                   status: int.parse(data[5]));
               debugPrint(readings.toString());
             });
           } else {
-            debugPrint("Waiting ....");
+            debugPrint("Waiting ${data.length} ....");
             debugPrint(x.toString());
           }
         } catch (e) {
-          // level = '00.0';
+          debugPrint("Error $e");
         }
 
         if (isDisconnecting) {
@@ -327,7 +333,7 @@ class _HomeState extends State<Home> {
                     child: Strip(
                         isWarning: readings.status == 4 || readings.status == 1 || readings.status == 0,
                         icon: null,
-                        txt: readings.drainLvl.toString() + ' %',
+                        txt: (readings.drainLvl == 0 ? '<50' : readings.drainLvl.toString()) + ' %',
                         type: 'Drain Level'),
                   ),
                   Expanded(

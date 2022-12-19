@@ -46,7 +46,7 @@ class Strip extends StatelessWidget {
                   Center(
                     child: Text(
                       type == 'PH' ? txt! : type!,
-                      style: TextStyle(fontSize: 22, color: type == 'PH' ? Colors.grey[800] : Colors.white),
+                      style: TextStyle(fontSize: 19, color: type == 'PH' ? Colors.grey[800] : Colors.white),
                     ),
                   ),
                 ],
@@ -74,7 +74,7 @@ class Strip extends StatelessWidget {
                   : Center(
                       child: Text(
                       txt!,
-                      style: const TextStyle(fontSize: 18, color: Colors.white),
+                      style: const TextStyle(fontSize: 17, color: Colors.white),
                     )),
             ),
           ),
